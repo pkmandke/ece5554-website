@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Deep Low Light Image Enhancement</title>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/frame.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/controls.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="css/custom.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="js/menu.js"></script>
+  <style>
+    .menu-index {
+      color: rgb(255, 255, 255) !important;
+      opacity: 1 !important;
+      font-weight: 700 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="menu-container">
+    <div class="menu">
+      <div class="menu-table flex-row-space-between">
+        <div class="logo flex-row-center">
+          <a href="index.html">Fall 2020 ECE 5554 Computer Vision</a>
+        </div>
+        <a class="menu-button" tabindex="0" href="javascript:void(0)">
+          <img src="img/menu.png">
+        </a>
+        <div class="menu-items flex-row-center flex-item">
+          <a href="#prob-statement" class="menu-index">Problem</a>
+          <a href="#approach" class="menu-widget">Approach</a>
+          <a href="#exp-and-results" class="menu-embedding">Experiments</a>
+          <a href="#references" class="menu-embedding">References</a>
+          <!-- <a href="https://github.com/yenchiah/project-website-template">GitHub</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content-container">
+    <h1 style="text-align:center">Deep Low Light Image Enhancement</h1>
+    <div class="content">
+      <div class="content-table flex-column">
+        <!-------------------------------------------------------------------------------------------->
+        <!--Start Intro-->
+        <div class="flex-row" style="align-items: center; justify-content: center;">
+          <div class="flex-item flex-column">
+            <figure>
+              <img class="image" src="img/head_image.png">
+              <figcaption style="text-align: center;">Source: <a href="https://github.com/VITA-Group/EnlightenGAN/blob/master/assets/show_3.png">GitHub</a></figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="flex-row" style="align-items: center; justify-content: center;">
+            <p class="text text-large" style="text-align: center;">
+              <a target="_blank" href="https://computing.ece.vt.edu/~pkmandke">Prathamesh Mandke</a>, pkmandke (at) vt.edu<br>
+              <a target="_blank" href="javascript:void(0)">Japnit Sethi</a>,  (at) vt.edu<br>
+              <!-- Fall 2020 ECE-5554 Computer Vision: Course Project<br> -->
+              <a target="_blank" href="https://ece.vt.edu">Department of Electrical and Computer Engineering</a><br>
+              <a target="_blank" href="https://vt.edu">Virginia Tech</a><br>
+            </p>
+        </div>
+        <!--End Intro-->
+        <!-------------------------------------------------------------------------------------------->
+        <!--Start Text Only-->
+        <div id="prob-statement" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Problem Statement</h2>
+            <hr>
+            <p class="text">
+              We consider the low light image enhancement problem of recovering an enhanced normal light version of a low contrast image which suffers from poor visibilty.
+              Low light image enhancement finds widespread applications in domains such as autonomous systems and surveillance where mission critical computer vision systems rely on images captured in low light regions for decision making.
+            </p>
+            <p class="text">
+              Image enhancement is an inherently ill-posed problem since a given low light image can have many possible normal light equivalents.
+              In this work, we seek to explore, compare and contrast various deep learning based approaches to the problem in supervised and unsupervised settings.
+              In particular, various flavors of deep convolutional auto-encoder based architectures will be compared to adversarial models.
+              These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitavely using metrics such as PSNR, SSIM and RMSE. 
+            </p>
+          </div>
+        </div>
+        <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+        <!--Start Approach-->
+        <div id="approach" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Approach</h2>
+            <hr>
+            <p class="text">
+              Most approaches to the image enhancement problem can be categorized as either histogram based methods (such as <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>) or learning based methods.
+              Learning based approaches can further be subdivided into supervised or unsupervised based on whether paired low-light and normal-light images are available.
+            </p>
+            <figure>
+              <img class="image" src="img/unet_base.png">
+              <figcaption style="width: 100%;text-align: center;">The baseline U-net architecture. Source: <a href="https://arxiv.org/pdf/1505.04597.pdf">Arxiv</a></figcaption>
+            </figure>
+            <p class="text">
+              In the supervised (or paired) setting, this work will implement the <a href="https://arxiv.org/abs/1505.04597">U-Net</a> auto-encoder architecture and explore multiple versions of the same.
+              Image enhancement falls under a wider class of problems known as image-to-image translation in which the U-Net architecture has shown great success.
+              We will explore two variations of the original U-net architecture.
+              While the original model uses feature concatenation in the residual connections, we will instead add corresponding feature maps in the encoder and decoder drawing inspiration from the <a href="https://arxiv.org/abs/1512.03385">ResNet</a> architecture.
+              This will help reduce the feature maps sizes in the decoder while also providing the benefit of the features extracted in the encoder.
+              In addition, we seek to explore the effect of two upsampling strategies in the decoder namely transpose convolutions and bilinear upsampling.
+            </p>
+            <p class="text">
+              Finally, the auto-encoder based architectures will be compared against a GAN based unpaired image enhancement model called <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> and <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - a histogram based method .
+              In many practical scenarios, it often difficult to obtain sufficient pairs of low light images with their normal light counter parts.
+              EnlightenGAN is an adversarial technique that learns a model for image enhancement in such an unsupervised setting.
+              CLAHE is an adaptive histogram equalization method that improves image contrast while reducing undesired noise amplification.
+              Thus, we seek to explore paired and unpaired settings for image enhancement along with learning and histogram based methods.
+            </p>
+          </div>
+        </div>
+        <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+        <!--Start Experiments and Results-->
+        <div id="exp-and-results" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Experiments and Results</h2>
+            <hr>
+            <p class="text">
+              In this work, we will implement the U-Net based convolutional auto-encoder architecture in Python using the <a href="https://pytorch.org">PyTorch</a> framework along with the code for training and testing pipelines. 
+              The <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">pytorch-CycleGAN-and-pix2pix</a> codebase structure and base classes will be extended to manage experiments and checkpoints.
+              We will use the <i><a href="https://github.com/facebookresearch/visdom">visdom</a></i>&nbsp;&nbsp;tool for visualization and the <i><a href="https://github.com/marcsantiago/dominate">dominate</a></i>&nbsp;&nbsp;API for managing HTML pages dynamically as needed.
+            </p>
+            <h4>Datasets</h4>
+            <p class="text">
+              We will train and evaluate our models on the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
+              The dataset consists of 500 pairs of low/normal light images across a variety of scenes such as houses, campuses, streets, etc. providing a diverse range of images.
+              EnlightenGAN will be trained on the custom unpaired dataset curated by the authors (<a href="https://arxiv.org/pdf/1906.06972.pdf">Jiang et al.</a>) that can be accessed at <a href="https://drive.google.com/drive/folders/1fwqz8-RnTfxgIIkebFG2Ej3jQFsYECh0?usp=sharing">this HTTPS URL</a>.
+              This dataset contains manually curated and examined unpaired set of 914 low light and 1016 normal light images collected by the authors from several sources. 
+            </p>
+            <h4>Experiments</h4>
+            <p class="text">
+              In this work, we will experiment with the U-Net based convolutional auto-encoder architecture with the following modifications:
+              1) Replace concatenation in the residual layers with skip connections (inspired by <a href="https://arxiv.org/abs/1512.03385">He et al.</a>)
+              2) Explore 2-strided transpose convolutions as well as bilinear interpolation in the decoder
+              3) Explore RMSE and SSIM based loss functions
+              4) Train the EnlightenGAN model for unpaired image enhancement
+              5) Compare and contrast results with the CLAHE algorithm<br>
+              We will use off-the-shelf implementations for training the <a href="https://github.com/VITA-Group/EnlightenGAN">EnlightenGAN</a> model as well as the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV implementation</a> of the CLAHE algorithm.
+            </p>
+            <h4>Metrics</h4>
+            <p class="text">
+              The results of various experiments will be compared using commonly used metrics for image-to-image translation problems.
+              The pixel-wise mean square error will be used to train the auto-encoder model via the back-propagation algorithm.
+              The Structure Similarity Index (<a href="https://www.cns.nyu.edu/~lcv/ssim/">SSIM</a>) measures the perceptually similarity between two images and will be used to study how well the model can recover the original image feature details.
+              Since image enhancement is a highly ill-posed problem with multiple possible ground truth enhanced versions, we will also strive to perform a robust qualitative comparison of the images.
+              Thus, we seek to compare and contrast the aforementioned methods for image enhancement in the low light setting.
+            </p>
+          </div>
+        </div>
+        <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+        <div id="references" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">References</h2>
+            <hr>
+            <p class="text">
+              [1] Ronneberger O., Fischer P., Brox T. (2015) U-Net: Convolutional Networks for Biomedical Image Segmentation. In: Navab N., Hornegger J., Wells W., Frangi A. (eds) Medical Image Computing and Computer-Assisted Intervention – MICCAI 2015. MICCAI 2015. Lecture Notes in Computer Science, vol 9351. Springer, Cham. https://doi.org/10.1007/978-3-319-24574-4_28
+            </p>
+            <p class="text">
+              [2] Jiang, Yifan, et al. "Enlightengan: Deep light enhancement without paired supervision." arXiv preprint arXiv:1906.06972 (2019).
+            </p>
+            <p class="text">
+              [3] He, Kaiming, et al. "Deep residual learning for image recognition." Proceedings of the IEEE conference on computer vision and pattern recognition. 2016.
+            </p>
+            <p class="text">
+              [4] Pisano ED, Zong S, Hemminger BM, DeLuca M, Johnston RE, Muller K, Braeuning MP, Pizer SM. Contrast limited adaptive histogram equalization image processing to improve the detection of simulated spiculations in dense mammograms. J Digit Imaging. 1998 Nov;11(4):193-200. doi: 10.1007/BF03178082. PMID: 9848052; PMCID: PMC3453156.
+            </p>
+            <p class="text">
+              [5] Wei, Chen, et al. "Deep retinex decomposition for low-light enhancement." arXiv preprint arXiv:1808.04560 (2018).
+            </p>
+            <p class="text">
+              [6] Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli, "Image quality assessment: From error visibility to structural similarity," IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.
+            </p>
+          </div>
+        </div>
+        <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center">Website Source: <a href="https://github.com/yenchiah/project-website-template">GitHub</a></div>
+</body>
+
+</html>
