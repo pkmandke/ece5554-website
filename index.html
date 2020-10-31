@@ -69,21 +69,43 @@
         <!--Start Text Only-->
         <div id="prob-statement" class="flex-row">
           <div class="flex-item flex-column">
-            <h2 class="add-top-margin">Problem Statement</h2>
+            <h2 class="add-top-margin">Abstract</h2>
             <hr>
             <p class="text">
-              We consider the low light image enhancement problem of recovering an enhanced normal light version of a low contrast image which suffers from poor visibilty.
-              Low light image enhancement finds widespread applications in domains such as autonomous systems and surveillance where mission critical computer vision systems rely on images captured in low light regions for decision making.
+              In this work, we consider the low light image enhancement problem of recovering an enhanced normal light version of a low contrast image which suffers from poor visibilty.
+              Image enhancement is an inherently ill-posed problem since a given low light image can have many possible normal light equivalents.
+              Further, the presence of noise along with spatial variations in contrast and brightness pose additional challenges in solving this problem.
+              <!-- Low light image enhancement finds widespread applications in domains such as autonomous systems and surveillance where mission critical computer vision systems rely on images captured in low light regions for decision making. -->
             </p>
             <p class="text">
-              Image enhancement is an inherently ill-posed problem since a given low light image can have many possible normal light equivalents.
               In this work, we seek to explore, compare and contrast various deep learning based approaches to the problem in supervised and unsupervised settings.
-              In particular, various flavors of deep convolutional auto-encoder based architectures will be compared to adversarial models.
-              These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitavely using metrics such as PSNR, SSIM and RMSE. 
+              At this stage, we provide the results of our initial experiments where we obtain performance benchmarks with 2 methods viz., 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>, which is a conventional (non deep learning) histogram equalization approach and 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> an unsupervised state-of-the-art low light enhancement model based on GANs.
+              With these initial experiments, we find that the GAN based model performs significantly better than the CLAHE method.
+              We provide qualitative as well as quantitave benchmarks to support these claims.
+              <!-- In particular, various flavors of deep convolutional auto-encoder based architectures will be compared to adversarial models -->
+              <!-- These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitavely using metrics such as PSNR, SSIM and RMSE.  -->
             </p>
           </div>
         </div>
         <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+        <!--Start Introduction-->
+        <div id="introduction" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Introduction</h2>
+            <hr>
+            <p class="text">
+              Low light image enhancement is a widely studied problem in Computer Vision, where the goal is to recover an enhanced normal light version of an image with low contrast or visibility.
+              Low light image enhancement finds widespread applications in domains such as autonomous driving and surveillance where mission critical computer vision systems rely on images captured in low lighting conditions for decision making.
+              As mentioned earlier, this task is inherently ill-posed since a given low-light image can have multiple potential normal light equivalents.
+              A simple example could be where a snapshot of a mountain range taken at night (pitch dark) could map to a normal light version during peak sunshine or at dusk.
+              Besides, other artifacts such as image noise or spatially varying brightness and contrast pose additional difficulties.
+              For example, certain regions of an image may need to be enhanced more than others in terms of contrast.
+              Thus, a conventional Computer Vision approach that increases the overall image contrast may not give visually pleasing results.
+            </p>
+          </div>
+        </div>
+        <!--End Introduction Only-->
         <!-------------------------------------------------------------------------------------------->
         <!--Start Approach-->
         <div id="approach" class="flex-row">
@@ -93,12 +115,39 @@
             <p class="text">
               Most approaches to the image enhancement problem can be categorized as either histogram based methods (such as <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>) or learning based methods.
               Learning based approaches can further be subdivided into supervised or unsupervised based on whether paired low-light and normal-light images are available.
+              Further, deep learning methods are based on either the convolutional auto-encoder framework or the Generative Adversarial Models (GANs) based framework.
             </p>
-            <figure>
+            <!-- <figure>
               <img class="image" src="img/unet_base.png">
               <figcaption style="width: 100%;text-align: center;">The baseline U-net architecture. Source: <a href="https://arxiv.org/pdf/1505.04597.pdf">Arxiv</a></figcaption>
+            </figure> -->
+            <p class="text">
+              As mentioned earlier, the goal of this work is to compare and contrast various different methods across each of the aforementioned approaches to the problem.
+              To this end, we choose to work with: 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - an adaptive histogram equalization based technique, 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> - an unsupervised GAN based framework and 3) multiple variations of the U-Net based auto-encoder framework which has shown great success for image-to-image translation problems.
+              At this stage, we present the results of benchmarking the first 2 methods viz., the CLAHE and EnlightenGAN with qualitative and quantitave comparisons.
+              For CLAHE, we use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV implementation</a> of the algorithm.
+              To experiment with EnlightenGAN, we use the codebase provided by the authors (<a href="https://github.com/VITA-Group/EnlightenGAN">GitHub</a>) and retrain the model using 3 NVIDIA GPUs based on the technique described in the <a href="https://arxiv.org/pdf/1906.06972.pdf">paper</a>.
+              A brief overview of the aforementioned approaches follows.
+            </p>
+            <figure>
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 60%;" src="img/clahe_teaser.png">
+              <figcaption style="width: 100%;text-align: center;">The CLAHE technique - histogram equalization and contrast limiting. Source: <a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization">Wikipedia</a></figcaption>
             </figure>
             <p class="text">
+              CLAHE (Contrast Limited Adaptive Histogram Equalization) improves over vanilla histogram equalization by considering small patches of the image to perform local equalization instead of globally over the entire image.
+              This helps avoid any unwanted excess enhancement in regions with very high or very low contrast.
+              Further, contrast limiting (contrast values beyond a threshold are clipped) is applied to reduce the effect of noise amplification as shown in the figure above.
+            </p>
+            <figure>
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 280px;" src="img/engan_teaser.png">
+              <figcaption style="width: 100%;text-align: center;">EnlightenGAN framework. Source: <a href="https://arxiv.org/pdf/1906.06972.pdf">ArXiv</a></figcaption>
+            </figure>
+            <p class="text">
+              EnlightenGAN is an unsupervised GAN based low light image enhancment method proposed by <a href="https://arxiv.org/pdf/1906.06972.pdf">Jiang et al.</a>.
+              The framework learns to enhance low light images without any paired supervision at training time. 
+              The main highlights of this work are a self-attention module in the Generator model along with a dual global-local discriminator structure that helps the model handle both the fine and coarse details in the image with relative ease.
+            </p>
+            <!-- <p class="text">
               In the supervised (or paired) setting, this work will implement the <a href="https://arxiv.org/abs/1505.04597">U-Net</a> auto-encoder architecture and explore multiple versions of the same.
               Image enhancement falls under a wider class of problems known as image-to-image translation in which the U-Net architecture has shown great success.
               We will explore two variations of the original U-net architecture.
@@ -112,7 +161,7 @@
               EnlightenGAN is an adversarial technique that learns a model for image enhancement in such an unsupervised setting.
               CLAHE is an adaptive histogram equalization method that improves image contrast while reducing undesired noise amplification.
               Thus, we seek to explore paired and unpaired settings for image enhancement along with learning and histogram based methods.
-            </p>
+            </p> -->
           </div>
         </div>
         <!--End Text Only-->
@@ -122,6 +171,144 @@
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Experiments and Results</h2>
             <hr>
+            <p class="text">
+              In this section, we present the experimental setup and results of our experiments with the CLAHE technique and EnlightenGAN.
+              We will present the results and code for our experiments with the convolutional auto-encoder based architectures (described in the proposal) during the final report.
+            </p>
+            <h4>Experimental Setup</h4>
+            <p class="text">
+                To begin with, we work with Contrast Limited Adaptive Histogram Equalization which is a conventional computer vision algorithm as described in the previous section.
+                This technique does not require any data for training.
+                We use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV's python based</a> implementation of CLAHE.
+                There are two parameters viz., clip limit for the contrast threshold and the grid or window size to use for applying histogram equalization.
+            </p>
+            <p class="text">
+              To experiment with EnlightenGAN, we reuse the author's <a href="https://github.com/VITA-Group/EnlightenGAN">codebase</a> which is based on the <a href="https://pytorch.org">PyTorch</a> deep learning framework.
+              The author's have curated a custom unpaired dataset with 914 low light and 1016 normal light images which we use for training.
+              We re-train the EnlightenGAN model with the default setting for the EnlightenGAN architecture as described <a href="https://github.com/VITA-Group/EnlightenGAN/blob/master/scripts/script.py">here</a>.
+              The training takes ~3hrs when distributed accross 3 NVIDIA TITAN RTX GPUs. The Figure below shows the training curve for 200 epochs visualized using the <i><a href="https://github.com/facebookresearch/visdom">visdom</a></i>&nbsp;&nbsp;tool.
+            </p>
+            <figure>
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 70%; height: 320px;" src="img/engan_loss.png">
+              <figcaption style="width: 100%;text-align: center;">EnlightenGAN training Loss Curves.G_A: Generator Loss, D_A: Global Discrimintor Loss, D_P: Patch Discriminator Loss, vgg: VGG Loss. Note that GAN loss curves do not necessarily reduce. The training is often complete when both G and D loss remain constant as niether of the 2 networks can learn from each other.</figcaption>
+            </figure>
+            <p class="text">
+              In order to evaluate both these techniques, we use the test subset of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
+              This dataset consists of paired low light and normal light images which we use to compute the metrics described below.
+              (Note that we are currently working on the convolutional auto-encoder based experiments and will present the results and code for it with the final report submission.)
+            </p>
+            <h4>Metrics</h4>
+            <p class="text">
+              Along with qualitative visualization, we rely on 2 commonly used quantitave metrics viz. Root Mean Square Error (RMSE) and Structure Similarity Index (SSIM) for evaluating our results.
+              The RMSE is a pixel wise mean square error between the true and predicted normal light image.
+              A lower value of RMSE indicates better similarity between two images.
+              The Structure Similarity Index (<a href="https://www.cns.nyu.edu/~lcv/ssim/">SSIM</a>) measures the perceptual similarity between two images and gives a a more general idea of how similar two images appear to a viewer.
+              The value of SSIM ranges between 0 and 1 with a higher value indicating better structural similarity.
+              We use <a href="https://scikit-learn.org/stable/">Sci-kit Learn's</a> implementation of SSIM and RMSE in our work. 
+            </p>
+            <div class="flex-row-space-between">
+              <div class="flex-item flex-column">
+                <img class="image max-width-400" style="width: 320px;" src="img/clip_limit_search_rmse.png">
+                <p class="image-caption">Mean RMSE as a function of clip limit (contrast threshold)</p>
+              </div>
+              <div class="flex-item flex-column">
+                <img class="image max-width-400" style="width: 320px;" src="img/clip_limit_search_ssim.png">
+                <p class="image-caption">Mean SSIM as a function of clip limit (contrast threshold)</p>
+              </div>
+              </div>
+            <p class="text">
+              In order to choose optimal contrast limit value for CLAHE, we perform a hyper-parameter search over the 485 train images from the LoL paired image dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a>.
+              We fix the grid or window size for CLAHE to 2 and plot the mean RMSE and SSIM across all images as a function of the clip limit to pick the optimal value of clip limit such that RMSE is minimum while SSIM is maximum.
+              The plots are shown in the Figure above.
+              The code to generate these plots along with the CLAHE algorithm has been submitted. 
+            </p>
+            <h4>Results</h4>
+            <div class="gallery">
+              <a href="javascript:void(0)" class="flex-column"><img src="img/low/1.png">
+                <div>Low Light</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/clahe/1.png">
+                <div>CLAHE</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/engan/1_fake_B.png">
+                <div>ENGAN</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/high/1.png">
+                <div>Ground Truth</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/low/146.png">
+                <div>Low Light</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/clahe/146.png">
+                <div>CLAHE</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/engan/146_fake_B.png">
+                <div>ENGAN</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/high/146.png">
+                <div>Ground Truth</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/low/179.png">
+                <div>Low Light</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/clahe/179.png">
+                <div>CLAHE</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/engan/179_fake_B.png">
+                <div>ENGAN</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/high/179.png">
+                <div>Ground Truth</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/low/748.png">
+                <div>Low Light</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/clahe/748.png">
+                <div>CLAHE</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/engan/748_fake_B.png">
+                <div>ENGAN</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/high/748.png">
+                <div>Ground Truth</div>
+              </a>
+            </div>
+            <p class="text">
+              The gallery of images above displays the qualitative results of the 2 methods in consideration.
+              It can be seen that ENGAN despite being an unsupervised technique, performs significantly better than CLAHE which is based on histogram equalization.
+              To obtain these results, we select a window size of 2 and select the clip limit (contrast threshold) of 30. based on the hyper-parameter search described in the above sub-section.
+              In particular, it can be seen that with the window size fixed, the RMSE has a minimum at a clip limit of 30. while the SSIM steadily falls with the clip limit.
+              Thus, we select 30 as an optimal value of the contrast threshold and apply CLAHE on all the images from the evaluation subset of the LoL dataset.
+              Some of the images are shown in the image gallery above.
+              We train ENGAN on the original dataset curated by the author's consisting of 914 low light and 1016 normal light unpaired images and apply the trained model on the same evaluation subset of the LoL dataset.
+              The 3rd column in the image gallery shows the results of ENGAN.
+            </p>
+            <p class="text">
+              To obtain quantitavely results, we compute the mean SSIM and RMSE over the evaluation dataset for both the methods - CLAHE and ENGAN.
+              <table style="border: 1px solid black;margin-left:auto; margin-right:auto; ">
+                <tr style="border: 1px solid black;">
+                  <td style="border: 1px solid black;"></td>
+                  <td style="border: 1px solid black;">RMSE</td>
+                  <td style="border: 1px solid black;">SSIM</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="border: 1px solid black;">CLAHE</td>
+                  <td style="border: 1px solid black;">49.81</td>
+                  <td style="border: 1px solid black;">0.4455</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="border: 1px solid black;">ENGAN</td>
+                  <td style="border: 1px solid black;">35.69</td>
+                  <td style="border: 1px solid black;">0.671</td>
+                </tr>
+              </table>
+              It is interesting to observe that despite the qualitative difference between the two methods being significant, quantitavely they do not seem to differ as much.
+              For instance, the Mean SSIM value over the evaluation dataset (LoL) is 0.4455 for CLAHE while being 0.671 for ENGAN.
+              Similarly, the difference in RMSE is not significant either.
+              Thus, while qualitatively ENGAN performs significantly better than CLAHE the quantitave numbers suggest that the techniques do not differ much and there is scope for better results.
+              We seek to investigate auto-encoder based methods moving forward and attempt to compare those with ENGAN and CLAHE.
+            </p>
+            <!-- <h4>Experimental Setup</h4>
             <p class="text">
               In this work, we will implement the U-Net based convolutional auto-encoder architecture in Python using the <a href="https://pytorch.org">PyTorch</a> framework along with the code for training and testing pipelines. 
               The <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">pytorch-CycleGAN-and-pix2pix</a> codebase structure and base classes will be extended to manage experiments and checkpoints.
@@ -151,6 +338,22 @@
               The Structure Similarity Index (<a href="https://www.cns.nyu.edu/~lcv/ssim/">SSIM</a>) measures the perceptually similarity between two images and will be used to study how well the model can recover the original image feature details.
               Since image enhancement is a highly ill-posed problem with multiple possible ground truth enhanced versions, we will also strive to perform a robust qualitative comparison of the images.
               Thus, we seek to compare and contrast the aforementioned methods for image enhancement in the low light setting.
+            </p> -->
+          </div>
+        </div>
+        <!--End Text Only-->
+        <!-------------------------------------------------------------------------------------------->
+        <div id="conclusion" class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Conclusion and Future Work</h2>
+            <hr>
+            <p class="text">
+              This report has described a qualitative as well as quantitave comparison between two approaches towards the Low light Image Enhancement problem.
+              On the one hand, we explore CLAHE - a conventional computer vision algorithm based on histogram equalization, while ENGAN is a state-of-the-art unsupervised image enhancement technique.
+              Qualitative results indicate that ENGAN, when trained with ~1k images, performs significantly better than CLAHE, with the images closely resembling the ground truth normal light versions.
+              The results from CLAHE do not appear to recover the color aspects of the original image as well as ENGAN. 
+              Further, quantitave comparisons between RMSE and SSIM indicate that CLAHE performs worse than ENGAN albeit not by a significant margin.
+              In our work moving forward, we seek to focus on multiple variants of the U-Net based convolutional auto-encoder architecture and compare and contrast their performance with CLAHE and ENGAN.
             </p>
           </div>
         </div>
