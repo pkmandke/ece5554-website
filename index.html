@@ -32,9 +32,11 @@
           <img src="img/menu.png">
         </a>
         <div class="menu-items flex-row-center flex-item">
-          <a href="#prob-statement" class="menu-index">Problem</a>
+          <a href="#abstract" class="menu-index">Abstract</a>
+          <a href="#introduction" class="menu-widget">Introduction</a>
           <a href="#approach" class="menu-widget">Approach</a>
           <a href="#exp-and-results" class="menu-embedding">Experiments</a>
+          <a href="#conclusion" class="menu-widget">Conclusion</a>
           <a href="#references" class="menu-embedding">References</a>
           <!-- <a href="https://github.com/yenchiah/project-website-template">GitHub</a> -->
         </div>
@@ -67,7 +69,7 @@
         <!--End Intro-->
         <!-------------------------------------------------------------------------------------------->
         <!--Start Text Only-->
-        <div id="prob-statement" class="flex-row">
+        <div id="abstract" class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Abstract</h2>
             <hr>
@@ -78,7 +80,7 @@
               <!-- Low light image enhancement finds widespread applications in domains such as autonomous systems and surveillance where mission critical computer vision systems rely on images captured in low light regions for decision making. -->
             </p>
             <p class="text">
-              In this work, we seek to explore, compare and contrast various deep learning based approaches to the problem in supervised and unsupervised settings.
+              We seek to explore, compare and contrast various deep learning based approaches to the problem in supervised and unsupervised settings.
               At this stage, we provide the results of our initial experiments where we obtain performance benchmarks with 2 methods viz., 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>, which is a conventional (non deep learning) histogram equalization approach and 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> an unsupervised state-of-the-art low light enhancement model based on GANs.
               With these initial experiments, we find that the GAN based model performs significantly better than the CLAHE method.
               We provide qualitative as well as quantitave benchmarks to support these claims.
@@ -380,6 +382,18 @@
             </p>
             <p class="text">
               [6] Z. Wang, A. C. Bovik, H. R. Sheikh and E. P. Simoncelli, "Image quality assessment: From error visibility to structural similarity," IEEE Transactions on Image Processing, vol. 13, no. 4, pp. 600-612, Apr. 2004.
+            </p>
+            <p class="text">
+              [7] Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, and Yoshua Bengio. 2014. Generative adversarial nets. In Proceedings of the 27th International Conference on Neural Information Processing Systems - Volume 2 (NIPS'14). MIT Press, Cambridge, MA, USA, 2672–2680.
+            </p>
+            <p class="text">
+              [8] URL: <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html</a>
+            </p>
+            <p class="text">
+              [9] Visdom tool by Facebook Research. URL: <a href="https://github.com/facebookresearch/visdom">https://github.com/facebookresearch/visdom</a>
+            </p>
+            <p class="text">
+              [10] PyTorch library. URL: <a href="https://pytorch.org">https://pytorch.org</a>
             </p>
           </div>
         </div>
