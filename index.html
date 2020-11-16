@@ -126,9 +126,10 @@
             <p class="text">
               As mentioned earlier, the goal of this work is to compare and contrast various different methods across each of the aforementioned approaches to the problem.
               To this end, we choose to work with: 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - an adaptive histogram equalization based technique, 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> - an unsupervised GAN based framework and 3) multiple variations of the U-Net based auto-encoder framework which has shown great success for image-to-image translation problems.
-              At this stage, we present the results of benchmarking the first 2 methods viz., the CLAHE and EnlightenGAN with qualitative and quantitave comparisons.
+              We present the results of benchmarking these methods supported with qualitative and quantitave comparisons.
               For CLAHE, we use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV implementation</a> of the algorithm.
               To experiment with EnlightenGAN, we use the codebase provided by the authors (<a href="https://github.com/VITA-Group/EnlightenGAN">GitHub</a>) and retrain the model using 3 NVIDIA GPUs based on the technique described in the <a href="https://arxiv.org/pdf/1906.06972.pdf">paper</a>.
+              We implement the U-Net based auto-encoder variants from scratch using the PyTorch framework in Python.
               A brief overview of the aforementioned approaches follows.
             </p>
             <figure>
@@ -149,15 +150,24 @@
               The framework learns to enhance low light images without any paired supervision at training time. 
               The main highlights of this work are a self-attention module in the Generator model along with a dual global-local discriminator structure that helps the model handle both the fine and coarse details in the image with relative ease.
             </p>
-            <!-- <p class="text">
-              In the supervised (or paired) setting, this work will implement the <a href="https://arxiv.org/abs/1505.04597">U-Net</a> auto-encoder architecture and explore multiple versions of the same.
-              Image enhancement falls under a wider class of problems known as image-to-image translation in which the U-Net architecture has shown great success.
-              We will explore two variations of the original U-net architecture.
-              While the original model uses feature concatenation in the residual connections, we will instead add corresponding feature maps in the encoder and decoder drawing inspiration from the <a href="https://arxiv.org/abs/1512.03385">ResNet</a> architecture.
-              This will help reduce the feature maps sizes in the decoder while also providing the benefit of the features extracted in the encoder.
-              In addition, we seek to explore the effect of two upsampling strategies in the decoder namely transpose convolutions and bilinear upsampling.
-            </p>
+            <figure>
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/tconv_arch.png">
+              <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Transpose Convolutions for Bilinear Upsampling</figcaption>
+            </figure>
             <p class="text">
+              To explore the problem in a supervised setting, we implement <a href="https://arxiv.org/abs/1505.04597">U-Net</a> based auto-encoder architectures and explore multiple versions of the same.
+              Image enhancement falls under a wider class of problems known as image-to-image translation in which the U-Net architecture has shown great success.
+              In this work, we explore two variations of the original U-net architecture.
+              While the original model uses feature concatenation in the residual connections, we instead perform arithmatic addition of the corresponding feature maps in the encoder and decoder drawing inspiration from the <a href="https://arxiv.org/abs/1512.03385">ResNet</a> architecture.
+              This helps reduce the feature maps sizes in the decoder while also helping the decoding process with features extracted from the original image.
+              In addition, we explore the effect of two upsampling strategies in the decoder namely transpose convolutions and bilinear upsampling.
+              While bilinear upsampling has been a widely used upsampling strategy, the transpose convolution operation (popularized by <a href="https://arxiv.org/pdf/1511.06434.pdf">the DCGAN paper</a>) serves as a learnable upsampling layer in convolutional auto-encoders.
+              As shown in the figure above, the overall architecture mainly consists of two parts, the encoder which consists of convolutional layers which use a stride of 2 to achieve the downsampling of the feature maps and the decoder which upsamples the feature map from the encoder using either the transpose convolutional layers (as shown) or bilinear upsampling.
+              The skip connections, which add together feature maps from corresponding levels of the encoder and the decoder help the decoder in retrieving features of the input image which make reconstruction easier.
+              In addition, the final output image of the decoder is added (element-wise) with the original input image to generate the normal light output.
+              This way, the model only learns to predict the difference between the input low-light and the output normal-light image which is often an easier task than predicting the output image directly.
+            </p>
+            <!-- <p class="text">
               Finally, the auto-encoder based architectures will be compared against a GAN based unpaired image enhancement model called <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> and <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - a histogram based method .
               In many practical scenarios, it often difficult to obtain sufficient pairs of low light images with their normal light counter parts.
               EnlightenGAN is an adversarial technique that learns a model for image enhancement in such an unsupervised setting.
@@ -174,10 +184,10 @@
             <h2 class="add-top-margin">Experiments and Results</h2>
             <hr>
             <p class="text">
-              In this section, we present the experimental setup and results of our experiments with the CLAHE technique and EnlightenGAN.
-              We will present the results and code for our experiments with the convolutional auto-encoder based architectures (described in the proposal) during the final report.
+              In this section, we present the experimental setup and results of our experiments with the CLAHE technique, EnlightenGAN and the U-Net based auto-encoders.
             </p>
-            <h4>Experimental Setup</h4>
+            <h3>Experimental Setup</h3>
+            <h4>CLAHE and ENGAN</h4>
             <p class="text">
                 To begin with, we work with Contrast Limited Adaptive Histogram Equalization which is a conventional computer vision algorithm as described in the previous section.
                 This technique does not require any data for training.
@@ -194,12 +204,18 @@
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 70%; height: 320px;" src="img/engan_loss.png">
               <figcaption style="width: 100%;text-align: center;">EnlightenGAN training Loss Curves.G_A: Generator Loss, D_A: Global Discrimintor Loss, D_P: Patch Discriminator Loss, vgg: VGG Loss. Note that GAN loss curves do not necessarily reduce. The training is often complete when both G and D loss remain constant as niether of the 2 networks can learn from each other.</figcaption>
             </figure>
+            <h4>U-Net based auto-encoders</h4>
             <p class="text">
-              In order to evaluate both these techniques, we use the test subset of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
-              This dataset consists of paired low light and normal light images which we use to compute the metrics described below.
-              (Note that we are currently working on the convolutional auto-encoder based experiments and will present the results and code for it with the final report submission.)
+              We implement the different variations of the U-net based auto-encoders  (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
+              We train all models on a compute node with NVIDIA Titan RTX GPUs.
+              There are two variants of the model with bilinear upsampling and transpose convolutions as the upsampling strategies.
+              Instances of both these variants are trained using the 485 images from the training set of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
+              The data is split into 450/485 images for training and 35 for validation with image resized to a fixed size of 320x320px while maintaining the aspect ratio.
+              The models are trained to minimize the Root Mean Square Error between the output and the ground truth normal light image while (optionally) maximizing the Structure Similarity Index Measure (SSIM).
+              (Note: The trainable version of the SSIM <a href="https://github.com/Po-Hsun-Su/pytorch-ssim">at this URL</a> is used in our work.)
+              Thus, the model is trained to minimize: Loss = RMSE + lambda * (1 - SSIM) which is the overall loss function where the weight of the SSIM term can be controlled with the lambda parameter.
             </p>
-            <h4>Metrics</h4>
+            <h3>Metrics</h3>
             <p class="text">
               Along with qualitative visualization, we rely on 2 commonly used quantitave metrics viz. Root Mean Square Error (RMSE) and Structure Similarity Index (SSIM) for evaluating our results.
               The RMSE is a pixel wise mean square error between the true and predicted normal light image.
@@ -224,7 +240,11 @@
               The plots are shown in the Figure above.
               The code to generate these plots along with the CLAHE algorithm has been submitted. 
             </p>
-            <h4>Results</h4>
+            <h3>Results</h3>
+            <p class="text">
+              In order to evaluate these different techniques, we use the test subset of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
+              This dataset consists of paired low light and normal light images which we use to compute the metrics described below.
+            </p>
             <div class="gallery">
               <a href="javascript:void(0)" class="flex-column"><img src="img/low/1.png">
                 <div>Low Light</div>
@@ -394,6 +414,10 @@
             </p>
             <p class="text">
               [10] PyTorch library. URL: <a href="https://pytorch.org">https://pytorch.org</a>
+            </p>
+            <p class="text">
+              [11] Radford, A., Metz, L. & Chintala, S. (2015). Unsupervised Representation Learning with Deep Convolutional Generative
+              Adversarial Networks. <a href="https://arxiv.org/pdf/1511.06434.pdf">URL</a>
             </p>
           </div>
         </div>
