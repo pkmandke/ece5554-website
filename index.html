@@ -81,8 +81,9 @@
             </p>
             <p class="text">
               We seek to explore, compare and contrast various deep learning based approaches to the problem in supervised and unsupervised settings.
-              At this stage, we provide the results of our initial experiments where we obtain performance benchmarks with 2 methods viz., 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>, which is a conventional (non deep learning) histogram equalization approach and 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> an unsupervised state-of-the-art low light enhancement model based on GANs.
-              With these initial experiments, we find that the GAN based model performs significantly better than the CLAHE method.
+              In our experiments, we obtain performance benchmarks with 3 methods viz., 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>, which is a conventional (non deep learning) histogram equalization approach 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> an unsupervised state-of-the-art low light enhancement model based on GANs and 3) multiple variations of U-Net based auto-encoder architectures with certain modifications.
+              We observe that the Generative model performs best across these methods while CLAHE performs worst.
+              The auto-encoder based architectures are able to retrieve most information from the low light images but the images look less natural.
               We provide qualitative as well as quantitave benchmarks to support these claims.
               <!-- In particular, various flavors of deep convolutional auto-encoder based architectures will be compared to adversarial models -->
               <!-- These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitavely using metrics such as PSNR, SSIM and RMSE.  -->
@@ -142,7 +143,7 @@
               Further, contrast limiting (contrast values beyond a threshold are clipped) is applied to reduce the effect of noise amplification as shown in the figure above.
             </p>
             <figure>
-              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 280px;" src="img/engan_teaser.png">
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 320px;" src="img/engan_teaser.png">
               <figcaption style="width: 100%;text-align: center;">EnlightenGAN framework. Source: <a href="https://arxiv.org/pdf/1906.06972.pdf">ArXiv</a></figcaption>
             </figure>
             <p class="text">
@@ -152,7 +153,7 @@
             </p>
             <figure>
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/tconv_arch.png">
-              <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Transpose Convolutions for Bilinear Upsampling</figcaption>
+              <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Transpose Convolutions for Upsampling</figcaption>
             </figure>
             <p class="text">
               To explore the problem in a supervised setting, we implement <a href="https://arxiv.org/abs/1505.04597">U-Net</a> based auto-encoder architectures and explore multiple versions of the same.
@@ -189,10 +190,10 @@
             <h3>Experimental Setup</h3>
             <h4>CLAHE and ENGAN</h4>
             <p class="text">
-                To begin with, we work with Contrast Limited Adaptive Histogram Equalization which is a conventional computer vision algorithm as described in the previous section.
-                This technique does not require any data for training.
-                We use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV's python based</a> implementation of CLAHE.
-                There are two parameters viz., clip limit for the contrast threshold and the grid or window size to use for applying histogram equalization.
+              To begin with, we work with Contrast Limited Adaptive Histogram Equalization which is a conventional computer vision algorithm as described in the previous section.
+              This technique does not require any data for training.
+              We use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV's python based</a> implementation of CLAHE.
+              There are two parameters viz., clip limit for the contrast threshold and the grid or window size to use for applying histogram equalization.
             </p>
             <p class="text">
               To experiment with EnlightenGAN, we reuse the author's <a href="https://github.com/VITA-Group/EnlightenGAN">codebase</a> which is based on the <a href="https://pytorch.org">PyTorch</a> deep learning framework.
@@ -206,7 +207,13 @@
             </figure>
             <h4>U-Net based auto-encoders</h4>
             <p class="text">
-              We implement the different variations of the U-net based auto-encoders  (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
+              We implement the different variations of the U-net based auto-encoders (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
+              We adopt the codebase structure from <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">this</a> repository from GitHub.
+              In particular, we adopt the base classes for different entities (such as models and dataloaders) and the options handler for all our experiments with the U-Net auto-encoders.
+              Based on this structure, we implement a model class for the auto-encoder which includes code for initializing the model along with training and testing it based on custom options.
+              We also implement a generic dataloader for any dataset having training/validation/testing data (see data/)
+              We also implement the two versions of the auto-encoder described earlier (see models/networks.py).
+              train.py and test.py are generic scripts that can be used to run an instance of training/testing the model. 
               We train all models on a compute node with NVIDIA Titan RTX GPUs.
               There are two variants of the model with bilinear upsampling and transpose convolutions as the upsampling strategies.
               Instances of both these variants are trained using the 485 images from the training set of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
