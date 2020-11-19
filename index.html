@@ -133,6 +133,7 @@
               We implement the U-Net based auto-encoder variants from scratch using the PyTorch framework in Python.
               A brief overview of the aforementioned approaches follows.
             </p>
+            <h3>CLAHE and EnlightenGAN</h3>
             <figure>
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 60%;" src="img/clahe_teaser.png">
               <figcaption style="width: 100%;text-align: center;">The CLAHE technique - histogram equalization and contrast limiting. Source: <a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization">Wikipedia</a></figcaption>
@@ -151,6 +152,7 @@
               The framework learns to enhance low light images without any paired supervision at training time. 
               The main highlights of this work are a self-attention module in the Generator model along with a dual global-local discriminator structure that helps the model handle both the fine and coarse details in the image with relative ease.
             </p>
+            <h3>U-Net based auto-encoders</h3>
             <figure>
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/tconv_arch.png">
               <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Transpose Convolutions for Upsampling</figcaption>
@@ -197,6 +199,7 @@
             </p>
             <p class="text">
               To experiment with EnlightenGAN, we reuse the author's <a href="https://github.com/VITA-Group/EnlightenGAN">codebase</a> which is based on the <a href="https://pytorch.org">PyTorch</a> deep learning framework.
+              (Note that we do not attach the code or the dataset for ENGAN with the submission, since we have not made any modifications from the author's original code.)
               The author's have curated a custom unpaired dataset with 914 low light and 1016 normal light images which we use for training.
               We re-train the EnlightenGAN model with the default setting for the EnlightenGAN architecture as described <a href="https://github.com/VITA-Group/EnlightenGAN/blob/master/scripts/script.py">here</a>.
               The training takes ~3hrs when distributed accross 3 NVIDIA TITAN RTX GPUs. The Figure below shows the training curve for 200 epochs visualized using the <i><a href="https://github.com/facebookresearch/visdom">visdom</a></i>&nbsp;&nbsp;tool.
@@ -205,22 +208,43 @@
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 70%; height: 320px;" src="img/engan_loss.png">
               <figcaption style="width: 100%;text-align: center;">EnlightenGAN training Loss Curves.G_A: Generator Loss, D_A: Global Discrimintor Loss, D_P: Patch Discriminator Loss, vgg: VGG Loss. Note that GAN loss curves do not necessarily reduce. The training is often complete when both G and D loss remain constant as niether of the 2 networks can learn from each other.</figcaption>
             </figure>
-            <h4>U-Net based auto-encoders</h4>
+            <h3>U-Net based auto-encoders</h3>
+            <h4>Programmer's Guide</h4>
             <p class="text">
-              We implement the different variations of the U-net based auto-encoders (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
-              We adopt the codebase structure from <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">this</a> repository from GitHub.
+              We implement the different variations of the U-net based auto-encoder architectures (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
+              We adopt the codebase structure from <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">this</a> GitHub repository which makes it easy to absract away common contructs of dataset loading as well as model training, evaluation and visualization.
               In particular, we adopt the base classes for different entities (such as models and dataloaders) and the options handler for all our experiments with the U-Net auto-encoders.
-              Based on this structure, we implement a model class for the auto-encoder which includes code for initializing the model along with training and testing it based on custom options.
-              We also implement a generic dataloader for any dataset having training/validation/testing data (see data/)
+              Based on this structure, we implement a model class for the auto-encoder (models/autoencoder_model.py) which includes code for initializing the model along with training and testing it based on custom options.
+              We also implement a generic dataloader for any dataset having training/validation/testing data (see data/trainval_dataloader.py).
+              The LoL dataset can be loaded by our custom dataloader defined in data/lol_dataset.py.
               We also implement the two versions of the auto-encoder described earlier (see models/networks.py).
               train.py and test.py are generic scripts that can be used to run an instance of training/testing the model. 
               We train all models on a compute node with NVIDIA Titan RTX GPUs.
+            </p>
+            <h4>Implementation Details</h4>
+            <div class="flex-row-space-between">
+              <div class="flex-item flex-column">
+                <img class="image max-width-400" style="height: 260px; width: 340px;" src="img/ex3tr5_rmse.png">
+                <p class="image-caption">Training/Validation RMSE Loss</p>
+              </div>
+              <div class="flex-item flex-column">
+                <img class="image max-width-400" style="height: 260px; width: 340px;" src="img/ex3tr5_psnr.png">
+                <p class="image-caption">Training/Validation PSNR</p>
+              </div>
+              </div>
+            <p class="text">
               There are two variants of the model with bilinear upsampling and transpose convolutions as the upsampling strategies.
-              Instances of both these variants are trained using the 485 images from the training set of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
-              The data is split into 450/485 images for training and 35 for validation with image resized to a fixed size of 320x320px while maintaining the aspect ratio.
+              We train each of these models with two loss functions: 1) Only the Root Mean Square Error (RMSE) between the predicted image and the ground truth normal light image and 2) RMSE along with the Structure Similarity Index.
               The models are trained to minimize the Root Mean Square Error between the output and the ground truth normal light image while (optionally) maximizing the Structure Similarity Index Measure (SSIM).
               (Note: The trainable version of the SSIM <a href="https://github.com/Po-Hsun-Su/pytorch-ssim">at this URL</a> is used in our work.)
               Thus, the model is trained to minimize: Loss = RMSE + lambda * (1 - SSIM) which is the overall loss function where the weight of the SSIM term can be controlled with the lambda parameter.
+              Note that while the RMSE forces pixel wise similarity between the predicted and ground truth natural light images, the SSIM strives to achieve more better visual pleasing image enhancement.
+              This results in 4 different training configurations: 1) Bilinear upsampling + RMSE Loss 2) Bilinear upsampling + RMSE and SSIM Loss 3) Transpose Convolutional + RMSE Loss and 4) Transpose Convolution + RMSE and SSIM Loss.
+              Instances all these configurations are trained using the 485 images from the training set of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
+              The data is split into 450/485 images for training and 35 for validation with image resized to a fixed size of 320x320px while maintaining the aspect ratio.
+              This resizing is achieved by the function *MakeSquared* implemented in data/utils.py.
+              The RMSE Loss along with the Peak Signal to Noise Ratio (PSNR) for training/validation for the Bilinear+RMSE configuration is shown in the figure above.
+              (We do not present the loss curves for all 4 configurations to save space and avoid redundancy.)
             </p>
             <h3>Metrics</h3>
             <p class="text">
@@ -240,7 +264,7 @@
                 <img class="image max-width-400" style="width: 320px;" src="img/clip_limit_search_ssim.png">
                 <p class="image-caption">Mean SSIM as a function of clip limit (contrast threshold)</p>
               </div>
-              </div>
+            </div>
             <p class="text">
               In order to choose optimal contrast limit value for CLAHE, we perform a hyper-parameter search over the 485 train images from the LoL paired image dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a>.
               We fix the grid or window size for CLAHE to 2 and plot the mean RMSE and SSIM across all images as a function of the clip limit to pick the optimal value of clip limit such that RMSE is minimum while SSIM is maximum.
