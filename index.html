@@ -154,7 +154,7 @@
             </p>
             <h3>U-Net based auto-encoders</h3>
             <figure>
-              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/tconv_arch.png">
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/tconv_arch_big.png">
               <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Transpose Convolutions for Upsampling</figcaption>
             </figure>
             <p class="text">
@@ -170,6 +170,10 @@
               In addition, the final output image of the decoder is added (element-wise) with the original input image to generate the normal light output.
               This way, the model only learns to predict the difference between the input low-light and the output normal-light image which is often an easier task than predicting the output image directly.
             </p>
+            <figure>
+              <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/bilinear_arch_big.png">
+              <figcaption style="width: 100%;text-align: center;">The U-Net like auto-encoder with Bilinear Upsampling for Upsampling</figcaption>
+            </figure>
             <!-- <p class="text">
               Finally, the auto-encoder based architectures will be compared against a GAN based unpaired image enhancement model called <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> and <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - a histogram based method .
               In many practical scenarios, it often difficult to obtain sufficient pairs of low light images with their normal light counter parts.
