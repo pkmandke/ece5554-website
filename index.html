@@ -276,7 +276,9 @@
               In order to choose optimal contrast limit value for CLAHE, we perform a hyper-parameter search over the 485 train images from the LoL paired image dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a>.
               We fix the grid or window size for CLAHE to 2 and plot the mean RMSE and SSIM across all images as a function of the clip limit to pick the optimal value of clip limit such that RMSE is minimum while SSIM is maximum.
               The plots are shown in the Figure above.
-              The code to generate these plots along with the CLAHE algorithm has been submitted. 
+              The code to generate these plots along with the CLAHE algorithm has been submitted in included in the file clahe.py.
+              In particular, it can be seen that with the window size fixed, the RMSE has a minimum at a clip limit of 30. while the SSIM steadily falls with the clip limit.
+              Thus, we select 30 as an optimal value of the contrast threshold and apply CLAHE on all the images from the evaluation subset of the LoL dataset.
             </p>
             <h3>Results</h3>
             <p class="text">
@@ -369,16 +371,72 @@
                 <div>Transpose Conv with RMSE + SSIM Loss</div>
               </a>
             </div>
+            <h4>Discussion</h4>
             <p class="text">
-              The gallery of images above displays the qualitative results of the 2 methods in consideration.
-              It can be seen that ENGAN despite being an unsupervised technique, performs significantly better than CLAHE which is based on histogram equalization.
-              To obtain these results, we select a window size of 2 and select the clip limit (contrast threshold) of 30. based on the hyper-parameter search described in the above sub-section.
-              In particular, it can be seen that with the window size fixed, the RMSE has a minimum at a clip limit of 30. while the SSIM steadily falls with the clip limit.
-              Thus, we select 30 as an optimal value of the contrast threshold and apply CLAHE on all the images from the evaluation subset of the LoL dataset.
-              Some of the images are shown in the image gallery above.
+              The gallery of images above displays the qualitative results of 4 sample images from the test set for CLAHE, ENGAN and various combinations of the auto-encoder architecture.
               We train ENGAN on the original dataset curated by the author's consisting of 914 low light and 1016 normal light unpaired images and apply the trained model on the same evaluation subset of the LoL dataset.
-              The 3rd column in the image gallery shows the results of ENGAN.
+              It can be seen that ENGAN despite being an unsupervised technique, performs best across all methods.
+              To obtain the results for CLAHE, we select a window size of 2 and select the clip limit (contrast threshold) of 30 based on the hyper-parameter search described in the above sub-section.
+              It is evident that CLAHE fails to fully recover the color component of the images while enhancing the contrast and lighting conditions.
+              One explanation for this could be that CLAHE works by equalizing the luminosity component of the L*a*b color space version of the low light image and combines this enhanced L channel with the a*b components to construct the normal light versoin.
+              Thus, it fails to consider the color spaces in the context of enhancement and results in poor reconstruction.
+              At the same time, since CLAHE simply adjusts the luminosity it is able to recover the details of the original image with considerable fidelity - one aspect where auto-encoder methods struggle.
+              The auto-encoder variants perform slightly better than CLAHE while being somewhat inferior to ENGAN.
+              While the transpose convolution based architectures (with RMSE and RMSE+SSIM losses) tend to generate slightly sharper images compared to their bilinear counter-parts, there does not seem to be any considerable difference between these variants.
+              There is, however, one subtle artifact that plagues the transpose convolution based models which we discuss in the analysis section below.
+              In the models with transpose convolutions, when trained to minimize RMSE while also maximizing SSIM the resulting images (last row) seem considerably sharper with lesser black patch-like artifacts as compared to the model trained with only RMSE.
+              This highlights the importance of the SSIM which enforces not a pixel-wise match constraint but a holistic structural similarity between the prediction and ground truth.
+              It is interesting to observe that all the CNN based models are able to recover minor details (such as the digital clock time reading) with considerable fidelity while enhancement. 
             </p>
+            <h4>Failure Cases</h4>
+            <div class="gallery">
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr5_bil_rmse/pred_111.png">
+                <div>Bilinear + RMSE Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr5_bil_rmse/pred_1.png">
+                <div>Bilinear + RMSE Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr5_bil_rmse/pred_780.png">
+                <div>Bilinear + RMSE Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr5_bil_rmse/pred_748.png">
+                <div>Bilinear + RMSE Loss</div>
+              </a>
+            </div>
+            <p class="text">
+              In the results of the auto-encoder architecture with bilinear upsampling trained only to minimize the MSE loss, we observe certain unnatural pixelated artifacts in the test set images.
+              We experiment with multiple hyper-parameter combinations in an attempt to recover from these issues but to no avail.
+              We believe that simply enforcing a pixel-wise MSE constraint on the images does not enable the model to learn a generalizable enhancement function.
+              Thus, the model fails to recover details that seem to be outlier regions in the context of the data it was trained on.
+              This pixelation is also observed in a few instances of the other auto-encoder variants albeit to  a relatively lesser degree.
+              Additionally, it can also be observed that in the last image above, the digital clock time is barely visible indicating a poor performance in recovering the details.
+            </p>
+            <h4>Analysis</h4>
+            <div class="gallery">
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr10_tconv_rmse/pred_748_crop.png">
+                <div>Transpose Conv + RMSE Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr10_tconv_rmse/pred_79_crop.png">
+                <div>Transpose Conv + RMSE Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr4_tconv_rmse_ssim/pred_22_crop.png">
+                <div>Transpose Conv w/ RMSE+SSIM Loss</div>
+              </a>
+              <a href="javascript:void(0)" class="flex-column"><img src="img/ex3tr4_tconv_rmse_ssim/pred_179_crop.png">
+                <div>Transpose Conv w/ RMSE+SSIM Loss</div>
+              </a>
+            </div>
+            <p class="text">
+              In the results from the transpose convolution based models, an interesting artifact was observed.
+              In all the images above, a subtle square-like repitative pattern is observed.
+              The images above are cropped versions of the predicted normal light images to make it easier to observe the artifacts.
+              These type of artifacts have been previously observed while using transpose convolutions in multiple contexts.
+              <a href="https://distill.pub/2016/deconv-checkerboard/">Odena et al.</a> from Google brain noted artifacts as being checker board like patterns that arise because of the nature of the transpose convolution operation that results in an uneven overlap between the filter trying to fill a cell in the output feature map.
+              They aver that deconvolution overlap, random initialization and loss functions are the main causes behind these artifacts and that an alternative usampling strategy such as bilinear interpolation could be an easy way to overcome them.
+              Indeed, these artifacts are not observed in our experiments with bilinear upsampling.
+              <a href="https://arxiv.org/abs/1707.02937">Aitken et al.</a> propose an initialization method for sub-pixel convolution known as convolution NN resize that helps tackle the issue, which could be used in future works as an alternative to the vanilla transpose convolution in this direction.
+            </p>
+            <h4>Quantitave Results</h4>
             <p class="text">
               To obtain quantitavely results, we compute the mean SSIM and RMSE over the evaluation dataset for both the methods - CLAHE and ENGAN.
               <table style="border: 1px solid black;margin-left:auto; margin-right:auto; ">
