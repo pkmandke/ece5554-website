@@ -169,6 +169,7 @@
               The skip connections, which add together feature maps from corresponding levels of the encoder and the decoder help the decoder in retrieving features of the input image which make reconstruction easier.
               In addition, the final output image of the decoder is added (element-wise) with the original input image to generate the normal light output.
               This way, the model only learns to predict the difference between the input low-light and the output normal-light image which is often an easier task than predicting the output image directly.
+              The figure below shows the auto-encoder architecture with bilinear upsampling instead of transpose convolution in the decoder.
             </p>
             <figure>
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 100%; height: 420px;" src="img/bilinear_arch_big.png">
@@ -221,7 +222,8 @@
               Based on this structure, we implement a model class for the auto-encoder (models/autoencoder_model.py) which includes code for initializing the model along with training and testing it based on custom options.
               We also implement a generic dataloader for any dataset having training/validation/testing data (see data/trainval_dataloader.py).
               The LoL dataset can be loaded by our custom dataloader defined in data/lol_dataset.py.
-              We also implement the two versions of the auto-encoder described earlier (see models/networks.py).
+              We also implement the two versions (transpose convolution and bilinear upsampling) of the auto-encoder described earlier (see models/networks.py).
+              We also explore versions of these architectures with smaller number of filters (argument f=16) but the results are not conclusive and hence have not been mentioned.
               train.py and test.py are generic scripts that can be used to run an instance of training/testing the model. 
               We train all models on a compute node with NVIDIA Titan RTX GPUs.
             </p>
@@ -249,6 +251,7 @@
               This resizing is achieved by the function *MakeSquared* implemented in data/utils.py.
               The RMSE Loss along with the Peak Signal to Noise Ratio (PSNR) for training/validation for the Bilinear+RMSE configuration is shown in the figure above.
               (We do not present the loss curves for all 4 configurations to save space and avoid redundancy.)
+              Note that we use the MSE (and not it's square root RMSE) in the loss function since it provides a smooth convex surface amenable for back-propagation through the network.
             </p>
             <h3>Metrics</h3>
             <p class="text">
