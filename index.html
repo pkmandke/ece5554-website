@@ -431,36 +431,69 @@
               In all the images above, a subtle square-like repitative pattern is observed.
               The images above are cropped versions of the predicted normal light images to make it easier to observe the artifacts.
               These type of artifacts have been previously observed while using transpose convolutions in multiple contexts.
-              <a href="https://distill.pub/2016/deconv-checkerboard/">Odena et al.</a> from Google brain noted artifacts as being checker board like patterns that arise because of the nature of the transpose convolution operation that results in an uneven overlap between the filter trying to fill a cell in the output feature map.
+              <a href="https://distill.pub/2016/deconv-checkerboard/">Odena et al.</a> from Google Brain noted artifacts as being checker board like patterns that arise because of the nature of the transpose convolution operation that results in an uneven overlap between the filter trying to fill a cell in the output feature map.
               They aver that deconvolution overlap, random initialization and loss functions are the main causes behind these artifacts and that an alternative usampling strategy such as bilinear interpolation could be an easy way to overcome them.
               Indeed, these artifacts are not observed in our experiments with bilinear upsampling.
               <a href="https://arxiv.org/abs/1707.02937">Aitken et al.</a> propose an initialization method for sub-pixel convolution known as convolution NN resize that helps tackle the issue, which could be used in future works as an alternative to the vanilla transpose convolution in this direction.
             </p>
             <h4>Quantitave Results</h4>
             <p class="text">
-              To obtain quantitavely results, we compute the mean SSIM and RMSE over the evaluation dataset for both the methods - CLAHE and ENGAN.
+              To obtain quantitave results, we compute the mean SSIM and MSE between true normal light images and the predictions over the evaluation (test) dataset (LoL) for the different approaches.
+              The table below shows the mean MSE and SSIM values for CLAHE, ENGAN and the different variations of the U-Net auto-encoder.
+              The SSIM is computed with a window size of 11 (default) using the <a href="https://scikit-image.org/docs/dev/api/skimage.metrics.html#skimage.metrics.structural_similarity">skimage</a> library.
+              The mean MSE is computed after scaling the images between 0 to 1.
               <table style="border: 1px solid black;margin-left:auto; margin-right:auto; ">
                 <tr style="border: 1px solid black;">
                   <td style="border: 1px solid black;"></td>
-                  <td style="border: 1px solid black;">RMSE</td>
+                  <td style="border: 1px solid black;">MSE</td>
                   <td style="border: 1px solid black;">SSIM</td>
                 </tr>
                 <tr style="border: 1px solid black;">
-                  <td style="border: 1px solid black;">CLAHE</td>
-                  <td style="border: 1px solid black;">49.81</td>
+                  <td style="text-align: center; border: 1px solid black;">CLAHE</td>
+                  <td style="border: 1px solid black;">0.04</td>
                   <td style="border: 1px solid black;">0.4455</td>
                 </tr>
                 <tr style="border: 1px solid black;">
-                  <td style="border: 1px solid black;">ENGAN</td>
-                  <td style="border: 1px solid black;">35.69</td>
-                  <td style="border: 1px solid black;">0.671</td>
+                  <td style="text-align: center; border: 1px solid black;">ENGAN</td>
+                  <td style="border: 1px solid black;">0.024</td>
+                  <td style="border: 1px solid black;">0.675</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="text-align: center; border: 1px solid black;">Bilinear with MSE Loss</td>
+                  <td style="border: 1px solid black;">0.013</td>
+                  <td style="border: 1px solid black;">0.517</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="text-align: center; border: 1px solid black;">Bilinear with MSE+SSIM Loss</td>
+                  <td style="border: 1px solid black;">0.015</td>
+                  <td style="border: 1px solid black;">0.553</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="text-align: center; border: 1px solid black;">Transpose Conv with MSE Loss</td>
+                  <td style="border: 1px solid black;">0.013</td>
+                  <td style="border: 1px solid black;">0.557</td>
+                </tr>
+                <tr style="border: 1px solid black;">
+                  <td style="text-align: center; border: 1px solid black;">Transpose Conv with MSE+SSIM Loss</td>
+                  <td style="border: 1px solid black;">0.016</td>
+                  <td style="border: 1px solid black;">0.538</td>
                 </tr>
               </table>
-              It is interesting to observe that despite the qualitative difference between the two methods being significant, quantitavely they do not seem to differ as much.
-              For instance, the Mean SSIM value over the evaluation dataset (LoL) is 0.4455 for CLAHE while being 0.671 for ENGAN.
+            </p>
+            <p class="text">
+              It is interesting to observe that despite the qualitative difference between the different methods being significant, quantitavely they do not seem to differ as much.
+              For instance, the Mean SSIM value is 0.4455 for CLAHE while being 0.675 for ENGAN despite the ENGAN output being far superior than CLAHE.
               Similarly, the difference in RMSE is not significant either.
-              Thus, while qualitatively ENGAN performs significantly better than CLAHE the quantitave numbers suggest that the techniques do not differ much and there is scope for better results.
-              We seek to investigate auto-encoder based methods moving forward and attempt to compare those with ENGAN and CLAHE.
+              The SSIM is a measure of how structurally similar the images are while MSE measures a more fine pixel-wise similarity which.
+              Neither of these measures, however, convey a complete idea of similarity between the images being compared.
+              In general, for image to image translation problems, it is often difficult to rely solely on quantitave metrics for performance evaluation and a qualitative examination of the output is a must.
+              Considering the SSIM for the different measures, it can be seen that the ENGAN has the highest value of 0.67 with CLAHE being the lowest and the different auto-encoder variants being in-between.
+              This corroborates the qualitative observations from the previous sub-section.
+              Comparing the different auto-encoder based variants, it can be seen that they do not differ by a significant amount either in terms of MSE or SSIM.
+              In terms of SSIM, it seems that the model transpose convolution for upsampling trained to minimize the MSE loss performs best with an SSIM of 0.557 while the simple scheme of bilinear upsampling with MSE loss performs worst with an SSIM value of 0.517.
+              This low value also supports our observation of certain pixelations in the predicted output for bilinear + MSE case.
+              In addition, it seems that the checkerboard like artifacts observed in case of transpose convolutions do not seem to have a significant effect on the metrics.
+              This somewhat underscores the idea that quantitave metrics do not convey the complete picture of model performance in case of image-to-image translation problems.
             </p>
             <!-- <h4>Experimental Setup</h4>
             <p class="text">
@@ -550,6 +583,12 @@
             <p class="text">
               [11] Radford, A., Metz, L. & Chintala, S. (2015). Unsupervised Representation Learning with Deep Convolutional Generative
               Adversarial Networks. <a href="https://arxiv.org/pdf/1511.06434.pdf">URL</a>
+            </p>
+            <p class="text">
+              [12] Aitken, A., Ledig, C., Theis, L., Caballero, J., Wang, Z., & Shi, W. (2017). Checkerboard artifact free sub-pixel convolution: A note on sub-pixel convolution, resize convolution and convolution resize. ArXiv, abs/1707.02937.
+            </p>
+            <p class="text">
+              [13] Odena, et al., "Deconvolution and Checkerboard Artifacts", Distill, 2016. <a href="http://doi.org/10.23915/distill.00003">URL</a>
             </p>
           </div>
         </div>
