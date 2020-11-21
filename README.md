@@ -9,23 +9,35 @@ In particular we deal with the following 3 methods
 2. [EnlightenGAN](https://arxiv.org/abs/1906.06972): A GAN based low light image enhancement method that works without paired supervision.
 3. Auto-encoders: U-Net based convolutional auto-encoder architectures with various ablations. 
 
+# Results
+
+* *img/low/*: Low light images from the test set of the [LoL dataset](https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB)
+* *img/high/*: Normal light images from the test set of the [LoL dataset](https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB)
+* *img/clahe/*: Predicted normal light images from CLAHE
+* *img/engan/*: Predicted normal light images from ENGAN model
+* *img/ex3tr5_bil_rmse/*: Predicted normal light images from auto-encoder model with bilinear upsampling with MSE Loss
+* *img/ex3tr6_bil_rmse_ssim/*: Predicted normal light images from auto-encoder model with bilinear upsampling with MSE and SSIM  Loss
+* *img/ex3tr10_tconv_rmse/*: Predicted normal light images from auto-encoder model with transpose convolution with MSE Loss
+* *img/ex3tr4_tconv_rmse_ssim/*: Predicted normal light images from auto-encoder model with transpose convolution with MSE and SSIM Loss
+
 # Programmer's Guide
 
-The codebase structure and base classes for the auto-encoder based experiments are derived from [this](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) repository.
-This structure makes it easy to abstract away common contructs of dataset loading as well as model training, evaluation and visualization.
-In particular, we adopt the base classes for different entities (such as models and dataloaders) and the options handler for all our experiments with the U-Net auto-encoders.
-Based on this structure, we implement a model class for the auto-encoder (in *models/autoencoder\_model.py*) which includes code for initializing the model along with training and testing it based on custom options.
-We also implement a generic dataloader for any dataset having training/validation/testing data (see *data/trainval\_dataloader.py*).
-The LoL dataset can be loaded by our custom dataloader defined in *data/lol\_dataset.py*.
-The scripts *train.py* and *test.py* can be used to train and test an instance of the model with specific commandline options.
-We experiment with multiple variations of the auto-encoder model while varying loss terms (RMSE, SSIM) as well as network architectures (bilinear upsampling, transpose convolution).
-We provide the scripts used to train these configurations in the *scripts/* directory.
-In order to train a new model instance, simply create a bash script invoking *train.py* with the desired commandline parameters.
+* The codebase structure and base classes for the auto-encoder based experiments are derived from [this](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) repository.
+* This structure makes it easy to abstract away common contructs of dataset loading as well as model training, evaluation and visualization.
+* In particular, we adopt the base classes for different entities (such as models and dataloaders) and the options handler for all our experiments with the U-Net auto-encoders.
+* Based on this structure, we implement a model class for the auto-encoder (in *models/autoencoder\_model.py*) which includes code for initializing the model along with training and testing it based on custom options.
+* *options/* contains various different options to select hyper-parameters and training and test setting along with paths to store the results and read the datasets as well as which models to use, number of epochs, etc.
+* We also implement a generic dataloader for any dataset having training/validation/testing data (see *data/trainval\_dataloader.py*).
+* The LoL dataset can be loaded by our custom dataloader defined in *data/lol\_dataset.py*.
+* The scripts *train.py* and *test.py* can be used to train and test an instance of the model with specific commandline options.
+* We experiment with multiple variations of the auto-encoder model while varying loss terms (MSE, SSIM) as well as network architectures (bilinear upsampling, transpose convolution).
+* We provide the scripts used to train and test these configurations in the *scripts/* directory.
+* In particular, *ex3\_train.py* and *ex3\_test.py* can be used to reproduce the results from our report.
+* In order to train a new model instance, simply create a bash script invoking *train.py* with the desired commandline parameters.
 
 Trained models can be tested by invoking the script *test.py* with the desired commandline options specifying the epoch to use for testing along with the directory path to store the results.
 
 # Acknowledgements
 
 Website: https://pkmandke.github.io/ece5554-website/
-
 Template used: https://github.com/yenchiah/project-website-template
