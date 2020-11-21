@@ -84,9 +84,9 @@
               In our experiments, we obtain performance benchmarks with 3 methods viz., 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a>, which is a conventional (non deep learning) histogram equalization approach 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> an unsupervised state-of-the-art low light enhancement model based on GANs and 3) multiple variations of U-Net based auto-encoder architectures with certain modifications.
               We observe that the Generative model performs best across these methods while CLAHE performs worst.
               The auto-encoder based architectures are able to retrieve most information from the low light images but the images look less natural.
-              We provide qualitative as well as quantitave benchmarks to support these claims.
+              We provide qualitative as well as quantitative benchmarks to support these claims.
               <!-- In particular, various flavors of deep convolutional auto-encoder based architectures will be compared to adversarial models -->
-              <!-- These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitavely using metrics such as PSNR, SSIM and RMSE.  -->
+              <!-- These approaches (as elaborated in the next section) will be evaluated qualitatively as well as quantitatively using metrics such as PSNR, SSIM and RMSE.  -->
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@
             <p class="text">
               As mentioned earlier, the goal of this work is to compare and contrast various different methods across each of the aforementioned approaches to the problem.
               To this end, we choose to work with: 1) <a href="https://pubmed.ncbi.nlm.nih.gov/9848052/">CLAHE</a> - an adaptive histogram equalization based technique, 2) <a href="https://arxiv.org/pdf/1906.06972.pdf">EnlightenGAN</a> - an unsupervised GAN based framework and 3) multiple variations of the U-Net based auto-encoder framework which has shown great success for image-to-image translation problems.
-              We present the results of benchmarking these methods supported with qualitative and quantitave comparisons.
+              We present the results of benchmarking these methods supported with qualitative and quantitative comparisons.
               For CLAHE, we use the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV implementation</a> of the algorithm.
               To experiment with EnlightenGAN, we use the codebase provided by the authors (<a href="https://github.com/VITA-Group/EnlightenGAN">GitHub</a>) and retrain the model using 3 NVIDIA GPUs based on the technique described in the <a href="https://arxiv.org/pdf/1906.06972.pdf">paper</a>.
               We implement the U-Net based auto-encoder variants from scratch using the PyTorch framework in Python.
@@ -148,7 +148,7 @@
               <figcaption style="width: 100%;text-align: center;">EnlightenGAN framework. Source: <a href="https://arxiv.org/pdf/1906.06972.pdf">ArXiv</a></figcaption>
             </figure>
             <p class="text">
-              EnlightenGAN is an unsupervised GAN based low light image enhancment method proposed by <a href="https://arxiv.org/pdf/1906.06972.pdf">Jiang et al.</a>.
+              EnlightenGAN is an unsupervised GAN based low light image enhancement method proposed by <a href="https://arxiv.org/pdf/1906.06972.pdf">Jiang et al.</a>.
               The framework learns to enhance low light images without any paired supervision at training time. 
               The main highlights of this work are a self-attention module in the Generator model along with a dual global-local discriminator structure that helps the model handle both the fine and coarse details in the image with relative ease.
             </p>
@@ -161,7 +161,7 @@
               To explore the problem in a supervised setting, we implement <a href="https://arxiv.org/abs/1505.04597">U-Net</a> based auto-encoder architectures and explore multiple versions of the same.
               Image enhancement falls under a wider class of problems known as image-to-image translation in which the U-Net architecture has shown great success.
               In this work, we explore two variations of the original U-net architecture.
-              While the original model uses feature concatenation in the residual connections, we instead perform arithmatic addition of the corresponding feature maps in the encoder and decoder drawing inspiration from the <a href="https://arxiv.org/abs/1512.03385">ResNet</a> architecture.
+              While the original model uses feature concatenation in the residual connections, we instead perform arithmetic addition of the corresponding feature maps in the encoder and decoder drawing inspiration from the <a href="https://arxiv.org/abs/1512.03385">ResNet</a> architecture.
               This helps reduce the feature maps sizes in the decoder while also helping the decoding process with features extracted from the original image.
               In addition, we explore the effect of two upsampling strategies in the decoder namely transpose convolutions and bilinear upsampling.
               While bilinear upsampling has been a widely used upsampling strategy, the transpose convolution operation (popularized by <a href="https://arxiv.org/pdf/1511.06434.pdf">the DCGAN paper</a>) serves as a learnable upsampling layer in convolutional auto-encoders.
@@ -211,13 +211,13 @@
             </p>
             <figure>
               <img class="image" style="display: block;margin-left: auto; margin-right: auto;width: 70%; height: 320px;" src="img/engan_loss.png">
-              <figcaption style="width: 100%;text-align: center;">EnlightenGAN training Loss Curves.G_A: Generator Loss, D_A: Global Discrimintor Loss, D_P: Patch Discriminator Loss, vgg: VGG Loss. Note that GAN loss curves do not necessarily reduce. The training is often complete when both G and D loss remain constant as niether of the 2 networks can learn from each other.</figcaption>
+              <figcaption style="width: 100%;text-align: center;">EnlightenGAN training Loss Curves.G_A: Generator Loss, D_A: Global Discrimintor Loss, D_P: Patch Discriminator Loss, vgg: VGG Loss. Note that GAN loss curves do not necessarily reduce. The training is often complete when both G and D loss remain constant as neither of the 2 networks can learn from each other.</figcaption>
             </figure>
             <h3>U-Net based auto-encoders</h3>
             <h4>Programmer's Guide</h4>
             <p class="text">
               We implement the different variations of the U-net based auto-encoder architectures (described in the Approach section above) from scratch in Python (v3.7) using the <a href="https://pytorch.org/">PyTorch</a> (v1.6) deep learning library.
-              We adopt the codebase structure from <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">this</a> GitHub repository which makes it easy to absract away common contructs of dataset loading as well as model training, evaluation and visualization.
+              We adopt the codebase structure from <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">this</a> GitHub repository which makes it easy to abstract away common constructs of dataset loading as well as model training, evaluation and visualization.
               In particular, we adopt the base classes for different entities (such as models and dataloaders) and the options handler for all our experiments with the U-Net auto-encoders.
               Based on this structure, we implement a model class for the auto-encoder (models/autoencoder_model.py) which includes code for initializing the model along with training and testing it based on custom options.
               We also implement a generic dataloader for any dataset having training/validation/testing data (see data/trainval_dataloader.py).
@@ -231,7 +231,7 @@
             <div class="flex-row-space-between">
               <div class="flex-item flex-column">
                 <img class="image max-width-400" style="height: 260px; width: 340px;" src="img/ex3tr5_rmse.png">
-                <p class="image-caption">Training/Validation RMSE Loss</p>
+                <p class="image-caption">Training/Validation MSE Loss</p>
               </div>
               <div class="flex-item flex-column">
                 <img class="image max-width-400" style="height: 260px; width: 340px;" src="img/ex3tr5_psnr.png">
@@ -240,27 +240,27 @@
               </div>
             <p class="text">
               There are two variants of the model with bilinear upsampling and transpose convolutions as the upsampling strategies.
-              We train each of these models with two loss functions: 1) Only the Root Mean Square Error (RMSE) between the predicted image and the ground truth normal light image and 2) RMSE along with the Structure Similarity Index.
-              The models are trained to minimize the Root Mean Square Error between the output and the ground truth normal light image while (optionally) maximizing the Structure Similarity Index Measure (SSIM).
+              We train each of these models with two loss functions: 1) Only the Mean Square Error (MSE) between the predicted image and the ground truth normal light image and 2) MSE along with the Structure Similarity Index.
+              The models are trained to minimize the Mean Square Error between the output and the ground truth normal light image while (optionally) maximizing the Structure Similarity Index Measure (SSIM).
               (Note: The trainable version of the SSIM <a href="https://github.com/Po-Hsun-Su/pytorch-ssim">at this URL</a> is used in our work.)
-              Thus, the model is trained to minimize: Loss = RMSE + lambda * (1 - SSIM) which is the overall loss function where the weight of the SSIM term can be controlled with the lambda parameter.
-              Note that while the RMSE forces pixel wise similarity between the predicted and ground truth natural light images, the SSIM strives to achieve more better visual pleasing image enhancement.
-              This results in 4 different training configurations: 1) Bilinear upsampling + RMSE Loss 2) Bilinear upsampling + RMSE and SSIM Loss 3) Transpose Convolutional + RMSE Loss and 4) Transpose Convolution + RMSE and SSIM Loss.
+              Thus, the model is trained to minimize: Loss = MSE + lambda * (1 - SSIM) which is the overall loss function where the weight of the SSIM term can be controlled with the lambda parameter.
+              Note that while the MSE forces pixel wise similarity between the predicted and ground truth natural light images, the SSIM strives to achieve more better visual pleasing image enhancement.
+              This results in 4 different training configurations: 1) Bilinear upsampling + MSE Loss 2) Bilinear upsampling + MSE and SSIM Loss 3) Transpose Convolutional + MSE Loss and 4) Transpose Convolution + MSE and SSIM Loss.
               Instances all these configurations are trained using the 485 images from the training set of the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
               The data is split into 450/485 images for training and 35 for validation with image resized to a fixed size of 320x320px while maintaining the aspect ratio.
               This resizing is achieved by the function *MakeSquared* implemented in data/utils.py.
-              The RMSE Loss along with the Peak Signal to Noise Ratio (PSNR) for training/validation for the Bilinear+RMSE configuration is shown in the figure above.
+              The MSE Loss along with the Peak Signal to Noise Ratio (PSNR) for training/validation for the Bilinear+MSE configuration is shown in the figure above.
               (We do not present the loss curves for all 4 configurations to save space and avoid redundancy.)
               Note that we use the MSE (and not it's square root RMSE) in the loss function since it provides a smooth convex surface amenable for back-propagation through the network.
             </p>
             <h3>Metrics</h3>
             <p class="text">
-              Along with qualitative visualization, we rely on 2 commonly used quantitave metrics viz. Root Mean Square Error (RMSE) and Structure Similarity Index (SSIM) for evaluating our results.
-              The RMSE is a pixel wise mean square error between the true and predicted normal light image.
-              A lower value of RMSE indicates better similarity between two images.
+              Along with qualitative visualization, we rely on 2 commonly used quantitative metrics viz. Mean Square Error (MSE) and Structure Similarity Index (SSIM) for evaluating our results.
+              The MSE is a pixel wise mean square error between the true and predicted normal light image.
+              A lower value of MSE indicates better similarity between two images.
               The Structure Similarity Index (<a href="https://www.cns.nyu.edu/~lcv/ssim/">SSIM</a>) measures the perceptual similarity between two images and gives a a more general idea of how similar two images appear to a viewer.
               The value of SSIM ranges between 0 and 1 with a higher value indicating better structural similarity.
-              We use <a href="https://scikit-learn.org/stable/">Sci-kit Learn's</a> implementation of SSIM and RMSE in our work. 
+              We use <a href="https://scikit-learn.org/stable/">Sci-kit Learn's</a> implementation of SSIM and MSE in our work. 
             </p>
             <div class="flex-row-space-between">
               <div class="flex-item flex-column">
@@ -378,7 +378,7 @@
               It can be seen that ENGAN despite being an unsupervised technique, performs best across all methods.
               To obtain the results for CLAHE, we select a window size of 2 and select the clip limit (contrast threshold) of 30 based on the hyper-parameter search described in the above sub-section.
               It is evident that CLAHE fails to fully recover the color component of the images while enhancing the contrast and lighting conditions.
-              One explanation for this could be that CLAHE works by equalizing the luminosity component of the L*a*b color space version of the low light image and combines this enhanced L channel with the a*b components to construct the normal light versoin.
+              One explanation for this could be that CLAHE works by equalizing the luminosity component of the L*a*b color space version of the low light image and combines this enhanced L channel with the a*b components to construct the normal light version.
               Thus, it fails to consider the color spaces in the context of enhancement and results in poor reconstruction.
               At the same time, since CLAHE simply adjusts the luminosity it is able to recover the details of the original image with considerable fidelity - one aspect where auto-encoder methods struggle.
               The auto-encoder variants perform slightly better than CLAHE while being somewhat inferior to ENGAN.
@@ -428,17 +428,17 @@
             </div>
             <p class="text">
               In the results from the transpose convolution based models, an interesting artifact was observed.
-              In all the images above, a subtle square-like repitative pattern is observed.
+              In all the images above, a subtle square-like repetitive pattern is observed.
               The images above are cropped versions of the predicted normal light images to make it easier to observe the artifacts.
               These type of artifacts have been previously observed while using transpose convolutions in multiple contexts.
               <a href="https://distill.pub/2016/deconv-checkerboard/">Odena et al.</a> from Google Brain noted artifacts as being checker board like patterns that arise because of the nature of the transpose convolution operation that results in an uneven overlap between the filter trying to fill a cell in the output feature map.
-              They aver that deconvolution overlap, random initialization and loss functions are the main causes behind these artifacts and that an alternative usampling strategy such as bilinear interpolation could be an easy way to overcome them.
+              They aver that deconvolution overlap, random initialization and loss functions are the main causes behind these artifacts and that an alternative upsampling strategy such as bilinear interpolation could be an easy way to overcome them.
               Indeed, these artifacts are not observed in our experiments with bilinear upsampling.
               <a href="https://arxiv.org/abs/1707.02937">Aitken et al.</a> propose an initialization method for sub-pixel convolution known as convolution NN resize that helps tackle the issue, which could be used in future works as an alternative to the vanilla transpose convolution in this direction.
             </p>
-            <h4>Quantitave Results</h4>
+            <h4>Quantitative Results</h4>
             <p class="text">
-              To obtain quantitave results, we compute the mean SSIM and MSE between true normal light images and the predictions over the evaluation (test) dataset (LoL) for the different approaches.
+              To obtain quantitative results, we compute the mean SSIM and MSE between true normal light images and the predictions over the evaluation (test) dataset (LoL) for the different approaches.
               The table below shows the mean MSE and SSIM values for CLAHE, ENGAN and the different variations of the U-Net auto-encoder.
               The SSIM is computed with a window size of 11 (default) using the <a href="https://scikit-image.org/docs/dev/api/skimage.metrics.html#skimage.metrics.structural_similarity">skimage</a> library.
               The mean MSE is computed after scaling the images between 0 to 1.
@@ -481,51 +481,20 @@
               </table>
             </p>
             <p class="text">
-              It is interesting to observe that despite the qualitative difference between the different methods being significant, quantitavely they do not seem to differ as much.
+              It is interesting to observe that despite the qualitative difference between the different methods being significant, quantitatively they do not seem to differ as much.
               For instance, the Mean SSIM value is 0.4455 for CLAHE while being 0.675 for ENGAN despite the ENGAN output being far superior than CLAHE.
               Similarly, the difference in RMSE is not significant either.
               The SSIM is a measure of how structurally similar the images are while MSE measures a more fine pixel-wise similarity which.
               Neither of these measures, however, convey a complete idea of similarity between the images being compared.
-              In general, for image to image translation problems, it is often difficult to rely solely on quantitave metrics for performance evaluation and a qualitative examination of the output is a must.
+              In general, for image to image translation problems, it is often difficult to rely solely on quantitative metrics for performance evaluation and a qualitative examination of the output is a must.
               Considering the SSIM for the different measures, it can be seen that the ENGAN has the highest value of 0.67 with CLAHE being the lowest and the different auto-encoder variants being in-between.
               This corroborates the qualitative observations from the previous sub-section.
               Comparing the different auto-encoder based variants, it can be seen that they do not differ by a significant amount either in terms of MSE or SSIM.
               In terms of SSIM, it seems that the model transpose convolution for upsampling trained to minimize the MSE loss performs best with an SSIM of 0.557 while the simple scheme of bilinear upsampling with MSE loss performs worst with an SSIM value of 0.517.
               This low value also supports our observation of certain pixelations in the predicted output for bilinear + MSE case.
               In addition, it seems that the checkerboard like artifacts observed in case of transpose convolutions do not seem to have a significant effect on the metrics.
-              This somewhat underscores the idea that quantitave metrics do not convey the complete picture of model performance in case of image-to-image translation problems.
+              This somewhat underscores the idea that quantitative metrics do not convey the complete picture of model performance in case of image-to-image translation problems.
             </p>
-            <!-- <h4>Experimental Setup</h4>
-            <p class="text">
-              In this work, we will implement the U-Net based convolutional auto-encoder architecture in Python using the <a href="https://pytorch.org">PyTorch</a> framework along with the code for training and testing pipelines. 
-              The <a href="https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix">pytorch-CycleGAN-and-pix2pix</a> codebase structure and base classes will be extended to manage experiments and checkpoints.
-              We will use the <i><a href="https://github.com/facebookresearch/visdom">visdom</a></i>&nbsp;&nbsp;tool for visualization and the <i><a href="https://github.com/marcsantiago/dominate">dominate</a></i>&nbsp;&nbsp;API for managing HTML pages dynamically as needed.
-            </p>
-            <h4>Datasets</h4>
-            <p class="text">
-              We will train and evaluate our models on the LOw-Light (LOL) Dataset curated by <a href="https://arxiv.org/abs/1808.04560">Wei et al.</a> that is available publicly at <a href="https://drive.google.com/open?id=157bjO1_cFuSd0HWDUuAmcHRJDVyWpOxB">this HTTPS URL</a>.
-              The dataset consists of 500 pairs of low/normal light images across a variety of scenes such as houses, campuses, streets, etc. providing a diverse range of images.
-              EnlightenGAN will be trained on the custom unpaired dataset curated by the authors (<a href="https://arxiv.org/pdf/1906.06972.pdf">Jiang et al.</a>) that can be accessed at <a href="https://drive.google.com/drive/folders/1fwqz8-RnTfxgIIkebFG2Ej3jQFsYECh0?usp=sharing">this HTTPS URL</a>.
-              This dataset contains manually curated and examined unpaired set of 914 low light and 1016 normal light images collected by the authors from several sources. 
-            </p>
-            <h4>Experiments</h4>
-            <p class="text">
-              In this work, we will experiment with the U-Net based convolutional auto-encoder architecture with the following modifications:
-              1) Replace concatenation in the residual layers with skip connections (inspired by <a href="https://arxiv.org/abs/1512.03385">He et al.</a>)
-              2) Explore 2-strided transpose convolutions as well as bilinear interpolation in the decoder
-              3) Explore RMSE and SSIM based loss functions
-              4) Train the EnlightenGAN model for unpaired image enhancement
-              5) Compare and contrast results with the CLAHE algorithm<br>
-              We will use off-the-shelf implementations for training the <a href="https://github.com/VITA-Group/EnlightenGAN">EnlightenGAN</a> model as well as the <a href="https://docs.opencv.org/master/d5/daf/tutorial_py_histogram_equalization.html">OpenCV implementation</a> of the CLAHE algorithm.
-            </p>
-            <h4>Metrics</h4>
-            <p class="text">
-              The results of various experiments will be compared using commonly used metrics for image-to-image translation problems.
-              The pixel-wise mean square error will be used to train the auto-encoder model via the back-propagation algorithm.
-              The Structure Similarity Index (<a href="https://www.cns.nyu.edu/~lcv/ssim/">SSIM</a>) measures the perceptually similarity between two images and will be used to study how well the model can recover the original image feature details.
-              Since image enhancement is a highly ill-posed problem with multiple possible ground truth enhanced versions, we will also strive to perform a robust qualitative comparison of the images.
-              Thus, we seek to compare and contrast the aforementioned methods for image enhancement in the low light setting.
-            </p> -->
           </div>
         </div>
         <!--End Text Only-->
@@ -535,12 +504,18 @@
             <h2 class="add-top-margin">Conclusion and Future Work</h2>
             <hr>
             <p class="text">
-              This report has described a qualitative as well as quantitave comparison between two approaches towards the Low light Image Enhancement problem.
+              This report has described a qualitative as well as quantitative comparison between 3 different approaches towards the Low Light Image Enhancement problem.
               On the one hand, we explore CLAHE - a conventional computer vision algorithm based on histogram equalization, while ENGAN is a state-of-the-art unsupervised image enhancement technique.
-              Qualitative results indicate that ENGAN, when trained with ~1k images, performs significantly better than CLAHE, with the images closely resembling the ground truth normal light versions.
-              The results from CLAHE do not appear to recover the color aspects of the original image as well as ENGAN. 
-              Further, quantitave comparisons between RMSE and SSIM indicate that CLAHE performs worse than ENGAN albeit not by a significant margin.
-              In our work moving forward, we seek to focus on multiple variants of the U-Net based convolutional auto-encoder architecture and compare and contrast their performance with CLAHE and ENGAN.
+              In addition, we also consider multiple variants of the U-Net based auto-encoder architecture with transpose convolutions and residual skip connections trained to minimize the MSE Loss while also (optionally) maximizing the SSIM metric.
+              Qualitative results indicate that ENGAN, when trained with ~1k images, performs best among all techniques, with the images closely resembling the ground truth normal light versions.
+              The results from CLAHE do not appear to recover the color aspects of the original image with full fidelity.
+              Among the 4 different variants of the auto-encoder based models, quantitative comparisons of MSE and SSIM do not indicate a significant difference.
+              Qualitatively, the transpose convolution based model trained to minimize MSE while maximizing SSIM performs best with least artifacts.
+              On the other hand, using bilinear upsampling along with an MSE Loss leads to certain pixelated artifacts as discussed in the above section.
+              Other 2 variants viz., the bilinear upsampling with MSE+SSIM loss and transpose convolution with MSE Loss have a few dark patches in the reconstructed images.
+              In models that use transpose convolutions for upsampling, we observe certain checkerboard-like artifacts as discussed above.
+              Aside from using bilinear upsampling in lieu of transpose convolutions, the convolution NN resize initialization scheme could be used in future work to tackle these checkerboard artifacts.
+              As a future work, various other approaches to the image enhancement problem such as the "Deep Retinex Decomposition" work by Wei et al. [5] could be benchmarked against these methods to better understand the scenarios where a particular architecture or loss function performs better.
             </p>
           </div>
         </div>
